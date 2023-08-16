@@ -13,13 +13,16 @@ const functions: AWS["functions"] = {
         ],
     },
     getReminder: {
-        handler: "src/functions/get-url/index.handler",
+        handler: "src/functions/get-reminder/index.handler",
         events: [
             {
-                httpApi: {
-                    path: "/{code}",
-                    method: "GET"
-                }
+                stream: {
+                    type: "dynamodb",
+                    arn: {
+                        "Fn::GetAtt": ["reminderTable", "StreamArn"],
+                    },
+                    filterPatterns: [ { eventName: ["REMOVE"] }],
+                },
             }
         ]
     }
