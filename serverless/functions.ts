@@ -1,4 +1,4 @@
-import type { AWS } from "@serverless/typescript";
+import type {AWS} from "@serverless/typescript";
 
 const functions: AWS["functions"] = {
     setReminder: {
@@ -21,11 +21,30 @@ const functions: AWS["functions"] = {
                     arn: {
                         "Fn::GetAtt": ["reminderTable", "StreamArn"],
                     },
-                    filterPatterns: [ { eventName: ["REMOVE"] }],
+                    filterPatterns: [{eventName: ["REMOVE"]}],
                 },
             }
+        ],
+        //@ts-expect-error
+        iamRoleStatements: [
+            {
+                Effect: "Allow",
+                Action: ["ses:SendEmail", "sns:Publish"],
+                Resource: "*"
+            }
         ]
-    }
-}
+    },
+    getReminders: {
+        handler: "src/functions/get-reminders/index.handler",
+        events: [
+            {
+                httpApi: {
+                    path: "/{userId}",
+                    method: "GET"
+                }
+            }
+        ],
+    },
+};
 
 export default functions;

@@ -7,7 +7,7 @@ import dynamoResources from "./serverless/dynamo-resources";
 const serverlessConfiguration: AWS = {
     service: "reminder-app",
     frameworkVersion: "3",
-    plugins: ["serverless-esbuild"],
+    plugins: ["serverless-esbuild", "serverless-iam-roles-per-function"],
     provider: {
         name: "aws",
         runtime: "nodejs14.x",
@@ -15,7 +15,8 @@ const serverlessConfiguration: AWS = {
         iamRoleStatements: [{
             Effect: "Allow",
             Action: "dynamodb:*",
-            Resource: "arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.reminderTable}"
+            Resource: ["arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.reminderTable}",
+                "arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.reminderTable}/index/index1",]
         }
         ],
         apiGateway: {
